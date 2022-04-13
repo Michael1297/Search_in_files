@@ -14,3 +14,6 @@ add_subdirectory(third_party/json)
 add_subdirectory(src)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json)
+
+configure_file(config.json ${CMAKE_CURRENT_BINARY_DIR}/config.json COPYONLY)
+configure_file(requests.json ${CMAKE_CURRENT_BINARY_DIR}/requests.json COPYONLY)

@@ -1,7 +1,9 @@
 #include <iostream>
-#include <nlohmann/json.hpp>
+#include "ConverterJSON.h"
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+    ConverterJSON JSON;
+    for(auto& i : JSON.GetTextDocuments())  std::cout << i << std::endl;
+    std::cout << JSON.GetResponsesLimit() << std::endl;
     return 0;
 }
