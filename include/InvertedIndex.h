@@ -4,7 +4,7 @@
 #include <iostream>
 
 struct Entry {
-    size_t doc_id, count = 0;
+    size_t doc_id, count;
 // Данный оператор необходим для проведения тестовых сценариев
     bool operator ==(const Entry& other) const {
         return (doc_id == other.doc_id &&

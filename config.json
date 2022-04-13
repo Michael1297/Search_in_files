@@ -1,7 +1,7 @@
 {
   "config": {
-    "name": "search_engine",
-    "version": "0.1",
+    "name": "SkillboxSearchEngine",
+    "version": "1.0",
     "max_responses": 5
   },
   "files": [

@@ -1,7 +1,9 @@
 #include "ConverterJSON.h"
 #include <fstream>
+#include <iostream>
 #include <nlohmann/json.hpp>
 #include "Exception.h"
+#include "Version.h"
 
 using JSON = nlohmann::json;
 
@@ -11,6 +13,8 @@ std::vector<std::string> ConverterJSON::GetTextDocuments() {
     if(!file.is_open()) throw Exception("config file is missing");
     file >> config;
     file.close();
+    if(config["config"]["version"] != PROJECT_VERSION) throw Exception("config.json has incorrect file version");
+    std::cout << "Starting " << config["config"]["name"] << " " << PROJECT_VERSION << "\n";
     return config["files"];
 }
 
