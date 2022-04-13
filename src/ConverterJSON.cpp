@@ -39,7 +39,10 @@ int ConverterJSON::GetResponsesLimit() {
 void ConverterJSON::putAnswers(std::vector<std::vector<std::pair<int, float>>> answers) {
     JSON answers_json;
     for(int i = 0; i < answers.size(); i++){
-        auto& request = answers_json["answers"]["request" + std::to_string(i)];
+        char request_command[sizeof("request000")];
+        sprintf(request_command, "request%03i", i);
+        auto& request = answers_json["answers"][request_command];
+
         if(!answers[i].empty()){
             request["result"] = true;
         } else{

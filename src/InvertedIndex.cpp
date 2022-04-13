@@ -20,7 +20,7 @@ void InvertedIndex::UpdateDocumentBase(std::vector<std::string> input_docs) {
                 text >> word;
                 if(word.empty()) return;    //текст закончился - выход из лямбды
 
-                //поиск элементы с нужным doc_id
+                //поиск элемента с нужным doc_id
                 auto entry = std::find_if(freq_dictionary[word].begin(), freq_dictionary[word].end(), [&i](Entry& element){
                     return element.doc_id == i;
                 });
