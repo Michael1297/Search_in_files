@@ -1,13 +1,14 @@
 #include "InvertedIndex.h"
 #include <fstream>
 #include <thread>
+#include <algorithm>
 
 void InvertedIndex::UpdateDocumentBase(std::vector<std::string> input_docs) {
     docs = input_docs;
     std::vector<std::thread> threads;
     threads.reserve(input_docs.size());
 
-    for(int i = 0; i < input_docs.size(); i++){
+    for(size_t i = 0; i < input_docs.size(); i++){
         threads.emplace_back([&](){
             std::ifstream file(input_docs[i]);
             if(!file.is_open()) return;
@@ -15,13 +16,13 @@ void InvertedIndex::UpdateDocumentBase(std::vector<std::string> input_docs) {
                 std::string word;
                 file >> word;
                 if(!word.empty()) {
-                    try{
-                        freq_dictionary[word].at(i).count++;
-                    }
-                    catch (...){
-                        freq_dictionary[word].resize(i + 1);
-                        freq_dictionary[word][i].doc_id = i;
-                        freq_dictionary[word][i].count++;
+                    auto find = std::find_if(freq_dictionary[word].begin(), freq_dictionary[word].end(), [&i](Entry& element){
+                        return element.doc_id == i;
+                    });
+                    if(find != freq_dictionary[word].end()){
+                        find->count++;
+                    } else{
+                        freq_dictionary[word].push_back({i, 1});
                     }
                 }
             }
