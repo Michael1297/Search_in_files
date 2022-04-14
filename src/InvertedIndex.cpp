@@ -43,3 +43,9 @@ void InvertedIndex::UpdateDocumentBase(std::vector<std::string> input_docs) {
 std::vector<Entry> InvertedIndex::GetWordCount(const std::string& word) {
     return freq_dictionary[word];
 }
+
+size_t InvertedIndex::getSumWordCount(const std::string &word) {
+    size_t summ = 0;
+    for(auto& wordCount : this->GetWordCount(word)) summ += wordCount.count;
+    return summ;
+}

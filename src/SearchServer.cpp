@@ -20,26 +20,26 @@ std::vector<std::vector<RelativeIndex>> SearchServer::search(const std::vector<s
 
         //отсортировать элементы по количеству файлов, в которых находятся эти слова
         std::sort(words.begin(), words.end(),[this](std::string& first, std::string& second){
-           return _index.GetWordCount(first).size() < _index.GetWordCount(second).size();
+            return _index.getSumWordCount(first) < _index.getSumWordCount(second);
         });
 
         auto first_request = _index.GetWordCount(words.front());    //самое редкое слово
         std::sort(first_request.begin(), first_request.end(), [](Entry& first, Entry& second){
-            return first.count < second.count;
+            return first.doc_id < second.doc_id;
         });
 
         //поиск совпадений
         for(int j = 1; j < words.size(); j++){
             auto request = _index.GetWordCount(words[j]);
             std::sort(request.begin(), request.end(), [](Entry& first, Entry& second){
-                return first.count < second.count;
+                return first.doc_id < second.doc_id;
             });
             std::vector<Entry> temp_buffer; //хранение совпадений
             std::set_intersection(first_request.begin(), first_request.end(),   //добавление совпадений в temp_buffer
                                   request.begin(), request.end(),
                                   std::back_inserter(temp_buffer),
                                   [](Entry& first, Entry& second){
-                return first.count < second.count;
+                return first.doc_id < second.doc_id;
             });
             std::swap(first_request, temp_buffer);
         }
