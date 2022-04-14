@@ -52,10 +52,10 @@ void ConverterJSON::putAnswers(std::vector<std::vector<RelativeIndex>> answers) 
             continue;
         }
 
-        for(auto& j : answers[i]){
+        for(int j = 0; j < answers[i].size() && j < this->GetResponsesLimit(); j++){
             JSON relevance;
-            relevance["docid"] = j.doc_id;
-            relevance["rank"] = j.rank;
+            relevance["docid"] = answers[i][j].doc_id;
+            relevance["rank"] = answers[i][j].rank;
             request["relevance"].push_back(relevance);
         }
     }

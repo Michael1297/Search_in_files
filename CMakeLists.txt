@@ -8,10 +8,12 @@ set(JSON_BuildTests OFF CACHE INTERNAL "")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
+set(SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
 
 add_subdirectory(third_party/json)
 
 add_subdirectory(src)
+add_subdirectory(test)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json)
 
