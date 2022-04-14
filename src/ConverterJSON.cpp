@@ -59,7 +59,7 @@ void ConverterJSON::putAnswers(std::vector<std::vector<std::pair<int, float>>> a
     }
 
     std::ofstream file("answers.json");
-    file << answers_json;
+    file << answers_json.dump(1, '\t');
     file.close();
 }
 
