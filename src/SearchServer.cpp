@@ -20,7 +20,7 @@ std::vector<std::vector<RelativeIndex>> SearchServer::search(const std::vector<s
 
         //отсортировать элементы по количеству файлов, в которых находятся эти слова
         std::sort(words.begin(), words.end(),[this](std::string& first, std::string& second){
-            return _index.getSumWordCount(first) < _index.getSumWordCount(second);
+            return _index.GetWordCount(first).size() < _index.GetWordCount(second).size();
         });
 
         auto first_request = _index.GetWordCount(words.front());    //самое редкое слово

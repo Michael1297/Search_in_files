@@ -29,8 +29,6 @@ public:
 * @return возвращает подготовленный список с частотой слов
 */
     std::vector<Entry> GetWordCount(const std::string& word);
-
-    size_t getSumWordCount(const std::string& word); //вернет сумму count среди всех файлов
 private:
     std::vector<std::string> docs; // список содержимого документов
     std::map<std::string, std::vector<Entry>> freq_dictionary; // частотный словарь
