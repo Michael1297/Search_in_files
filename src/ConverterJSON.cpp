@@ -4,6 +4,7 @@
 #include <nlohmann/json.hpp>
 #include "Exception.h"
 #include "Version.h"
+#include "InvertedIndex.h"
 
 using JSON = nlohmann::json;
 
@@ -36,7 +37,8 @@ int ConverterJSON::GetResponsesLimit() {
     return config["config"]["max_responses"];
 }
 
-void ConverterJSON::putAnswers(std::vector<std::vector<std::pair<int, float>>> answers) {
+void ConverterJSON::putAnswers(std::vector<std::vector<RelativeIndex>> answers) {
+    this->clearAnswers();
     JSON answers_json;
     for(int i = 0; i < answers.size(); i++){
         char request_command[sizeof("request000")];
@@ -52,8 +54,8 @@ void ConverterJSON::putAnswers(std::vector<std::vector<std::pair<int, float>>> a
 
         for(auto& j : answers[i]){
             JSON relevance;
-            relevance["docid"] = j.first;
-            relevance["rank"] = j.second;
+            relevance["docid"] = j.doc_id;
+            relevance["rank"] = j.rank;
             request["relevance"].push_back(relevance);
         }
     }
@@ -66,4 +68,24 @@ void ConverterJSON::putAnswers(std::vector<std::vector<std::pair<int, float>>> a
 void ConverterJSON::clearAnswers() {
     std::ofstream answers("answers.json", std::ios::trunc);
     if(answers.is_open()) answers.close();
+}
+
+void ConverterJSON::search() {
+    auto textDocuments = this->GetTextDocuments();
+    auto requests = this->GetRequests();
+    std::vector<std::string> docs(textDocuments.size());
+    //чтение текста из файлов
+    for(int i = 0; i < docs.size(); i++){
+        std::ifstream file(textDocuments[i], std::ios::binary | std::ios::ate);
+        if(!file.is_open()) continue;
+        docs[i].resize(file.tellg());
+        file.seekg(0);
+        file.read((char*)docs[i].c_str(), docs[i].size());
+        file.close();
+    }
+
+    InvertedIndex index;
+    index.UpdateDocumentBase(docs); //индексация текста
+    SearchServer searchServer(index);
+    this->putAnswers(searchServer.search(requests));    //поиск и запись результата
 }

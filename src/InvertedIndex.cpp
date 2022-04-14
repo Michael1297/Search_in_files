@@ -12,7 +12,7 @@ void InvertedIndex::UpdateDocumentBase(std::vector<std::string> input_docs) {
     threads.reserve(input_docs.size());
 
     for(size_t i = 0; i < input_docs.size(); i++){
-        threads.emplace_back([&](){
+        threads.emplace_back([this, &input_docs, i, &mutex](){
             std::stringstream text;
             text << input_docs[i];  //парсинг текста
             while (true){

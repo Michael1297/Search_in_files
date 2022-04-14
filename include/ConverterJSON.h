@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <string>
+#include "SearchServer.h"
 
 /**
 * Класс для работы с JSON-файлами
@@ -29,7 +30,9 @@ public:
 /**
 * Положить в файл answers.json результаты поисковых запросов
 */
-    void putAnswers(std::vector<std::vector<std::pair<int, float>>> answers);
+    void putAnswers(std::vector<std::vector<RelativeIndex>> answers);
 
     void clearAnswers();
+
+    void search();
 };

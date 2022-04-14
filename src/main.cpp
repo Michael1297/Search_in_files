@@ -2,8 +2,15 @@
 #include "ConverterJSON.h"
 
 int main() {
-    ConverterJSON JSON;
-    for(auto& i : JSON.GetTextDocuments())  std::cout << i << std::endl;
-    std::cout << JSON.GetResponsesLimit() << std::endl;
+    ConverterJSON json;
+    try{
+        json.search();
+    }
+    catch (std::exception& e){
+        std::cerr << e.what() << "\n";
+    }
+    catch (...){
+        std::cerr << "catch unknown error\n";
+    }
     return 0;
 }
