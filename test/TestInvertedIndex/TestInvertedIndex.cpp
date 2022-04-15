@@ -16,6 +16,7 @@ void TestInvertedIndexFunctionality(
     }
     ASSERT_EQ(result, expected);
 }
+
 TEST(TestCaseInvertedIndex, TestBasic) {
 const vector<string> docs = {
         "london is the capital of great britain",
@@ -31,6 +32,7 @@ const vector<vector<Entry>> expected = {
 };
 TestInvertedIndexFunctionality(docs, requests, expected);
 }
+
 TEST(TestCaseInvertedIndex, TestBasic2) {
 const vector<string> docs = {
         "milk milk milk milk water water water",
@@ -38,18 +40,20 @@ const vector<string> docs = {
         "milk milk milk milk milk water water water water water",
         "Americano Cappuccino"
 };
-const vector<string> requests = {"milk", "water", "cappuchino"};
+
+const vector<string> requests = {"milk", "water", "Cappuccino"};
 const vector<vector<Entry>> expected = {
         {
                 {0, 4}, {1, 1}, {2, 5}
         }, {
-                {0, 2}, {1, 2}, {2, 5}
+                {0, 3}, {1, 2}, {2, 5}
         }, {
                 {3, 1}
         }
 };
 TestInvertedIndexFunctionality(docs, requests, expected);
 }
+
 TEST(TestCaseInvertedIndex, TestInvertedIndexMissingWord) {
 const vector<string> docs = {
         "a b c d e f g h i j k l",

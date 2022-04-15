@@ -10,7 +10,7 @@ int main() {
         std::cerr << e.what() << "\n";
     }
     catch (...){
-        std::cerr << "catch unknown error\n";
+        std::cerr << "caught an unknown error\n";
     }
     return 0;
 }
