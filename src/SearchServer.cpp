@@ -55,12 +55,12 @@ std::vector<std::vector<RelativeIndex>> SearchServer::search(const std::vector<s
             if(doc.second > max_relevance) max_relevance = doc.second;
         }
 
-        for(auto& doc : relevance){
+        for(auto& doc : relevance){     //вставка результатов поиска
             result[i].push_back({doc.first, (float)doc.second / (float)max_relevance});
         }
 
         if(result[i].empty()) {
-            result[i].push_back ({});  //если не найдено
+            result[i].push_back ({});  //если ничего не найдено
         }
 
         //сортировка результатов поиска
