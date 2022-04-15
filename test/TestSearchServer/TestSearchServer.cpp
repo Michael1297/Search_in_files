@@ -30,6 +30,7 @@ SearchServer srv(idx);
 std::vector<vector<RelativeIndex>> result = srv.search(request);
 ASSERT_EQ(result, expected);
 }
+
 TEST(TestCaseSearchServer, TestTop5) {
 const vector<string> docs = {
         "london is the capital of great britain",
@@ -58,11 +59,7 @@ const vector<string> docs = {
 const vector<string> request = {"moscow is the capital of russia"};
 const std::vector<vector<RelativeIndex>> expected = {
         {
-                {7, 1},
-                {14, 1},
-                {0, 0.4},
-                {1, 0.4},
-                {2, 0.4}
+                {7, 1}
         }
 };
 InvertedIndex idx;

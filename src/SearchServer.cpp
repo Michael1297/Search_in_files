@@ -1,6 +1,8 @@
 #include "SearchServer.h"
 #include <sstream>
 #include <algorithm>
+#include <unordered_set>
+#include <map>
 
 std::vector<std::vector<RelativeIndex>> SearchServer::search(const std::vector<std::string>& queries_input) {
     std::vector<std::vector<RelativeIndex>> result(queries_input.size());
@@ -16,46 +18,55 @@ std::vector<std::vector<RelativeIndex>> SearchServer::search(const std::vector<s
             words.push_back(word);
         }
         std::sort(words.begin(), words.end());
-        words.erase(std::unique(words.begin(), words.end()), words.end());  //удалить дубликаты
+        words.erase(std::unique(words.begin(), words.end()), words.end());  //удалить дубликаты слов
 
         //отсортировать элементы по количеству файлов, в которых находятся эти слова
         std::sort(words.begin(), words.end(),[this](std::string& first, std::string& second){
             return _index.GetWordCount(first).size() < _index.GetWordCount(second).size();
         });
 
-        auto first_request = _index.GetWordCount(words.front());    //самое редкое слово
-        std::sort(first_request.begin(), first_request.end(), [](Entry& first, Entry& second){
-            return first.doc_id < second.doc_id;
-        });
-
-        //поиск совпадений
-        for(int j = 1; j < words.size(); j++){
-            auto request = _index.GetWordCount(words[j]);
-            std::sort(request.begin(), request.end(), [](Entry& first, Entry& second){
-                return first.doc_id < second.doc_id;
-            });
-            std::vector<Entry> temp_buffer; //хранение совпадений
-            std::set_intersection(first_request.begin(), first_request.end(),   //добавление совпадений в temp_buffer
-                                  request.begin(), request.end(),
-                                  std::back_inserter(temp_buffer),
-                                  [](Entry& first, Entry& second){
-                return first.doc_id < second.doc_id;
-            });
-            std::swap(first_request, temp_buffer);
+        std::unordered_set<size_t> doc_id; // id документов редкого слова
+        for(auto& index : _index.GetWordCount(words.front())){
+            doc_id.insert(index.doc_id);
         }
 
-        size_t total_relevance = 0; //релевантность для всех документов
-        for(auto& req : first_request) total_relevance += req.count;
+        //создание списка совпадений
+        for(int j = 1; j < words.size(); j++){
+            std::unordered_set<size_t> another_doc_id; //id документов других слов
+            for(auto& index : _index.GetWordCount(words[j])){
+                another_doc_id.insert(index.doc_id);
+            }
+            for(auto& id : doc_id){
+                if(!another_doc_id.count(id)) doc_id.erase(id); //в других документах нет id из списка редкого слова
+            }
+        }
 
-        for(auto& req : first_request){ //выдача результатов поиска
-            result[i].push_back({req.doc_id, (float)req.count / (float)total_relevance});
+        std::map<size_t, size_t> relevance; //релевантность документа
+        for(auto& word : words){
+            for(auto& index : _index.GetWordCount(word)){
+                if(doc_id.count(index.doc_id) && index.count){
+                    relevance[index.doc_id] += index.count;
+                }
+            }
+        }
+
+        size_t max_relevance = 0; //максимальная релевантность для всех документов
+        for(auto& doc : relevance){
+            if(doc.second > max_relevance) max_relevance = doc.second;
+        }
+
+        for(auto& doc : relevance){
+            result[i].push_back({doc.first, (float)doc.second / (float)max_relevance});
+        }
+
+        if(result[i].empty()) {
+            result[i].push_back ({});  //если не найдено
         }
 
         //сортировка результатов поиска
         std::sort(result[i].begin(), result[i].end(), [](RelativeIndex& first, RelativeIndex& second){
             return first.rank > second.rank;
         });
-
     }
     return result;
 }
