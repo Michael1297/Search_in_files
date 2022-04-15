@@ -59,9 +59,7 @@ std::vector<std::vector<RelativeIndex>> SearchServer::search(const std::vector<s
             result[i].push_back({doc.first, (float)doc.second / (float)max_relevance});
         }
 
-        if(result[i].empty()) {
-            result[i].push_back ({});  //если ничего не найдено
-        }
+        if(result[i].empty()) result[i].push_back ({});  //если ничего не найдено
 
         //сортировка результатов поиска
         std::sort(result[i].begin(), result[i].end(), [](RelativeIndex& first, RelativeIndex& second){

@@ -38,8 +38,9 @@ int ConverterJSON::GetResponsesLimit() {
 }
 
 void ConverterJSON::putAnswers(std::vector<std::vector<RelativeIndex>> answers) {
-    this->clearAnswers();
+    auto max_responses = this->GetResponsesLimit();
     JSON answers_json;
+
     for(int i = 0; i < answers.size(); i++){
         char request_command[sizeof("request000")];
         sprintf(request_command, "request%03i", i);
@@ -52,7 +53,7 @@ void ConverterJSON::putAnswers(std::vector<std::vector<RelativeIndex>> answers) 
             request["result"] = true;
         }
 
-        for(int j = 0; j < answers[i].size() && j < this->GetResponsesLimit(); j++){
+        for(int j = 0; j < answers[i].size() && j < max_responses; j++){
             JSON relevance;
             relevance["docid"] = answers[i][j].doc_id;
             relevance["rank"] = answers[i][j].rank;
@@ -65,30 +66,26 @@ void ConverterJSON::putAnswers(std::vector<std::vector<RelativeIndex>> answers) 
     file.close();
 }
 
-void ConverterJSON::clearAnswers() {
-    std::ofstream answers("answers.json", std::ios::trunc);
-    if(answers.is_open()) answers.close();
-}
-
 void ConverterJSON::search() {
     auto textDocuments = this->GetTextDocuments();
     auto requests = this->GetRequests();
     std::vector<std::string> docs(textDocuments.size());
+
     //чтение текста из файлов
     for(int i = 0; i < docs.size(); i++){
-        std::ifstream file(textDocuments[i], std::ios::binary | std::ios::ate);
+        std::ifstream file(textDocuments[i], std::ios::binary | std::ios::ate); //открыть файл с конца
         if(!file.is_open()) {
             std::cout << textDocuments[i] << " not find\n";
             continue;
         }
-        docs[i].resize(file.tellg());
-        file.seekg(0);
+        docs[i].resize(file.tellg());   //выделить место под текст файла
+        file.seekg(0);  //вернуться в начало файла
         file.read((char*)docs[i].c_str(), docs[i].size());
         file.close();
     }
 
     InvertedIndex index;
     index.UpdateDocumentBase(docs); //индексация текста
-    SearchServer searchServer(index);
-    this->putAnswers(searchServer.search(requests));    //поиск и запись результата
+    SearchServer search_server(index);
+    this->putAnswers(search_server.search(requests));    //поиск и запись результата
 }

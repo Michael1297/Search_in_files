@@ -7,7 +7,6 @@
 * Класс для работы с JSON-файлами
 */
 class ConverterJSON {
-
 public:
     ConverterJSON() = default;
 /**
@@ -32,7 +31,5 @@ public:
 */
     void putAnswers(std::vector<std::vector<RelativeIndex>> answers);
 
-    void clearAnswers();
-
-    void search();
+    void search();  //выполняет поиск и выдает результат
 };
