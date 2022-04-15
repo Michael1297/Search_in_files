@@ -45,11 +45,11 @@ void ConverterJSON::putAnswers(std::vector<std::vector<RelativeIndex>> answers) 
         sprintf(request_command, "request%03i", i);
         auto& request = answers_json["answers"][request_command];
 
-        if(!answers[i].empty()){
-            request["result"] = true;
-        } else{
+        if(answers[i].front() == RelativeIndex()){  //не найдено
             request["result"] = false;
             continue;
+        } else{
+            request["result"] = true;
         }
 
         for(int j = 0; j < answers[i].size() && j < this->GetResponsesLimit(); j++){
