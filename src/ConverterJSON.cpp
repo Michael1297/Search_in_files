@@ -65,27 +65,3 @@ void ConverterJSON::putAnswers(std::vector<std::vector<RelativeIndex>> answers) 
     file << answers_json.dump(1, '\t');
     file.close();
 }
-
-void ConverterJSON::search() {
-    auto textDocuments = this->GetTextDocuments();
-    auto requests = this->GetRequests();
-    std::vector<std::string> docs(textDocuments.size());
-
-    //чтение текста из файлов
-    for(int i = 0; i < docs.size(); i++){
-        std::ifstream file(textDocuments[i], std::ios::binary | std::ios::ate); //открыть файл с конца
-        if(!file.is_open()) {
-            std::cout << textDocuments[i] << " not find\n";
-            continue;
-        }
-        docs[i].resize(file.tellg());   //выделить место под текст файла
-        file.seekg(0);  //вернуться в начало файла
-        file.read((char*)docs[i].c_str(), docs[i].size());
-        file.close();
-    }
-
-    InvertedIndex index;
-    index.UpdateDocumentBase(docs); //индексация текста
-    SearchServer search_server(index);
-    this->putAnswers(search_server.search(requests));    //поиск и запись результата
-}

@@ -1,10 +1,9 @@
 #include <iostream>
-#include "ConverterJSON.h"
+#include "Search.hpp"
 
 int main() {
-    ConverterJSON json;
     try{
-        json.search();
+        search();
     }
     catch (std::exception& e){
         std::cerr << e.what() << "\n";

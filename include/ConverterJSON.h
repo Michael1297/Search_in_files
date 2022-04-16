@@ -30,6 +30,4 @@ public:
 * Положить в файл answers.json результаты поисковых запросов
 */
     void putAnswers(std::vector<std::vector<RelativeIndex>> answers);
-
-    void search();  //выполняет поиск и выдает результат
 };

@@ -12,6 +12,7 @@ add_executable(${PROJECT_NAME}
         ${INCLUDE_DIR}/InvertedIndex.h
         ${INCLUDE_DIR}/Version.h
         ${INCLUDE_DIR}/SearchServer.h
+        ${INCLUDE_DIR}/Search.hpp
         )
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDE_DIR})
