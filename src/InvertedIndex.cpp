@@ -40,7 +40,11 @@ void InvertedIndex::UpdateDocumentBase(std::vector<std::string> input_docs) {
 
 std::vector<Entry> InvertedIndex::GetWordCount(const std::string& word) {
     try{
-        return freq_dictionary.at(word);
+        auto wordCount = freq_dictionary.at(word);
+        std::sort(wordCount.begin(), wordCount.end(), [](Entry& first, Entry& second){  //отсортировать по возрастанию doc_id
+            return first.doc_id < second.doc_id;
+        });
+        return wordCount;
     }
     catch (...) {   //если слово отсутствует
         return {{}};
