@@ -20,20 +20,18 @@ void InvertedIndex::UpdateDocumentBase(std::vector<std::string> input_docs) {
                 text >> word;
                 if(word.empty()) return;    //текст закончился - выход из лямбды
 
+                mutex.lock();
                 //поиск элемента с нужным doc_id
                 auto entry = std::find_if(freq_dictionary[word].begin(), freq_dictionary[word].end(), [&i](Entry& element){
                     return element.doc_id == i;
                 });
 
                 if(entry != freq_dictionary[word].end()){   //слово есть в словаре
-                    mutex.lock();
                     entry->count++;
-                    mutex.unlock();
                 } else{
-                    mutex.lock();
                     freq_dictionary[word].push_back({i, 1});    //добавить слово в словарь
-                    mutex.unlock();
                 }
+                mutex.unlock();
             }
         });
     }
