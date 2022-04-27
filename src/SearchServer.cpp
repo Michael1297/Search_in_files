@@ -63,7 +63,7 @@ std::vector<std::vector<RelativeIndex>> SearchServer::search(const std::vector<s
 
         //сортировка результатов поиска
         std::sort(result[i].begin(), result[i].end(), [](RelativeIndex& first, RelativeIndex& second){
-            return first.rank > second.rank;
+            return first.rank > second.rank || (first.rank == second.rank && first.doc_id < second.doc_id);
         });
     }
     return result;
