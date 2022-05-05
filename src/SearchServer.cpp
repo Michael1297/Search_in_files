@@ -25,9 +25,9 @@ std::vector<std::vector<RelativeIndex>> SearchServer::search(const std::vector<s
             return _index.GetWordCount(first).size() < _index.GetWordCount(second).size();
         });
 
-        std::unordered_set<size_t> min_doc_id; // id документов редкого слова
+        std::unordered_set<size_t> rare_doc_id; // id документов редкого слова
         for(auto& index : _index.GetWordCount(words.front())){
-            min_doc_id.insert(index.doc_id);
+            rare_doc_id.insert(index.doc_id);
         }
 
         //создание списка совпадений
@@ -36,15 +36,15 @@ std::vector<std::vector<RelativeIndex>> SearchServer::search(const std::vector<s
             for(auto& index : _index.GetWordCount(words[j])){
                 another_doc_id.insert(index.doc_id);
             }
-            for(auto& id : min_doc_id){
-                if(!another_doc_id.count(id)) min_doc_id.erase(id); //в других документах нет id из списка редкого слова
+            for(auto& id : rare_doc_id){
+                if(!another_doc_id.count(id)) rare_doc_id.erase(id); //в других документах нет id из списка редкого слова
             }
         }
 
         std::map<size_t, size_t> relevance; //релевантность документов
         for(auto& word : words){
             for(auto& index : _index.GetWordCount(word)){
-                if(min_doc_id.count(index.doc_id) && index.count){
+                if(rare_doc_id.count(index.doc_id) && index.count){
                     relevance[index.doc_id] += index.count;
                 }
             }
