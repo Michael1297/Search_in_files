@@ -43,9 +43,12 @@ std::vector<std::vector<RelativeIndex>> SearchServer::search(const std::vector<s
             for(auto& index : _index.GetWordCount(words[j])){
                 another_doc_id.insert(index.doc_id);
             }
+
+            std::unordered_set<size_t> match_list;  //список совпадений
             for(auto& id : rare_doc_id){
-                if(!another_doc_id.count(id)) rare_doc_id.erase(id); //в других документах нет id из списка редкого слова
+                if(another_doc_id.count(id)) match_list.insert(id); //если в других документах есть id документа из списка редкого слова
             }
+            rare_doc_id = match_list;
         }
 
         std::map<size_t, size_t> relevance; //релевантность документов
