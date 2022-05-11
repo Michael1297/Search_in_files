@@ -42,26 +42,26 @@ void ConverterJSON::putAnswers(std::vector<std::vector<RelativeIndex>> answers) 
     JSON answers_json;
 
     for(int i = 0; i < answers.size(); i++){
-        char request_command[sizeof("request000")];
-        sprintf(request_command, "request%03i", i);
-        auto& request = answers_json["answers"][request_command];
+        char request[sizeof("request000")];
+        sprintf(request, "request%03i", i);
 
         if(answers[i].front() == RelativeIndex()){  //не найдено
-            request["result"] = false;
+            answers_json["answers"][request]["result"] = false;
             continue;
         } else{
-            request["result"] = true;
+            answers_json["answers"][request]["result"] = true;
         }
 
         for(int j = 0; j < answers[i].size() && j < max_responses; j++){
             JSON relevance;
             relevance["docid"] = answers[i][j].doc_id;
             relevance["rank"] = answers[i][j].rank;
-            request["relevance"].push_back(relevance);
+            answers_json["answers"][request]["relevance"].push_back(relevance);
         }
     }
 
-    std::ofstream file("answers.json");
+    std::fstream file("answers.json", std::ios::in | std::ios::out);
+    if(!file.is_open()) throw Exception("answers file is missing");
     file << answers_json.dump(1, '\t');
     file.close();
 }
