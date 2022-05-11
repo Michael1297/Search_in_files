@@ -62,7 +62,9 @@ void ConverterJSON::putAnswers(std::vector<std::vector<RelativeIndex>> answers) 
         }
     }
 
-    std::fstream file("answers.json", std::ios::in | std::ios::out);
+    if(answers_json.empty()) answers_json["answers"] = {};  //отсутствуют запросы
+
+    std::fstream file("answers.json", std::ios::in | std::ios::out | std::ios::trunc);
     if(!file.is_open()) throw Exception("answers file is missing");
     file << answers_json.dump(1, '\t');
     file.close();
