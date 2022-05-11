@@ -1,4 +1,5 @@
 #include "InvertedIndex.h"
+
 #include <thread>
 #include <sstream>
 #include <algorithm>

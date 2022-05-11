@@ -1,7 +1,9 @@
 #include "ConverterJSON.h"
+
 #include <fstream>
 #include <iostream>
 #include <nlohmann/json.hpp>
+
 #include "Exception.h"
 #include "Version.h"
 #include "InvertedIndex.h"

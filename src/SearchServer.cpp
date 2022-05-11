@@ -1,4 +1,5 @@
 #include "SearchServer.h"
+
 #include <sstream>
 #include <algorithm>
 #include <unordered_set>
@@ -17,6 +18,12 @@ std::vector<std::vector<RelativeIndex>> SearchServer::search(const std::vector<s
             if(word.empty()) break;
             words.push_back(word);
         }
+
+        if(words.empty()){      //пустой запрос
+            result[i].push_back ({});
+            continue;
+        }
+
         std::sort(words.begin(), words.end());
         words.erase(std::unique(words.begin(), words.end()), words.end());  //удалить дубликаты слов
 
