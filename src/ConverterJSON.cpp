@@ -62,7 +62,7 @@ void ConverterJSON::putAnswers(std::vector<std::vector<RelativeIndex>> answers) 
         }
     }
 
-    if(answers_json.empty()) answers_json["answers"] = {};  //отсутствуют запросы
+    if(answers_json.empty()) answers_json["answers"] = JSON::array();  //отсутствуют запросы
 
     {
         std::ifstream file("answers.json");
