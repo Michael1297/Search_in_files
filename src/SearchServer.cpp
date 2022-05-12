@@ -1,5 +1,6 @@
 #include "SearchServer.h"
 
+#include <cmath>
 #include <sstream>
 #include <algorithm>
 #include <unordered_set>
@@ -9,54 +10,26 @@ std::vector<std::vector<RelativeIndex>> SearchServer::search(const std::vector<s
     std::vector<std::vector<RelativeIndex>> result(queries_input.size());
 
     for(int i = 0; i < queries_input.size(); i++){
-        std::vector<std::string> words;
+        std::unordered_set<std::string> words;  //список слов
         std::stringstream text;
         text << queries_input[i];
         while(true){
             std::string word;
             text >> word;
             if(word.empty()) break;
-            words.push_back(word);
+            words.insert(word);
         }
 
         if(words.empty()){      //пустой запрос
-            result[i].push_back ({});
+            result[i].emplace_back();
             continue;
-        }
-
-        std::sort(words.begin(), words.end());
-        words.erase(std::unique(words.begin(), words.end()), words.end());  //удалить дубликаты слов
-
-        //отсортировать элементы по количеству файлов, в которых находятся эти слова
-        std::sort(words.begin(), words.end(),[this](std::string& first, std::string& second){
-            return _index.GetWordCount(first).size() < _index.GetWordCount(second).size();
-        });
-
-        std::unordered_set<size_t> rare_doc_id; // id документов редкого слова
-        for(auto& index : _index.GetWordCount(words.front())){
-            rare_doc_id.insert(index.doc_id);
-        }
-
-        //создание списка совпадений
-        for(int j = 1; j < words.size(); j++){
-            std::unordered_set<size_t> another_doc_id; //id документов других слов
-            for(auto& index : _index.GetWordCount(words[j])){
-                another_doc_id.insert(index.doc_id);
-            }
-
-            std::unordered_set<size_t> match_list;  //список совпадений
-            for(auto& id : rare_doc_id){
-                if(another_doc_id.count(id)) match_list.insert(id); //если в других документах есть id документа из списка редкого слова
-            }
-            rare_doc_id = match_list;
         }
 
         std::map<size_t, size_t> relevance; //релевантность документов
         for(auto& word : words){
             for(auto& index : _index.GetWordCount(word)){
-                if(rare_doc_id.count(index.doc_id) && index.count){
-                    relevance[index.doc_id] += index.count;
-                }
+                if(index == Entry()) continue;  //слово не найдено
+                relevance[index.doc_id] += index.count;
             }
         }
 
@@ -66,10 +39,12 @@ std::vector<std::vector<RelativeIndex>> SearchServer::search(const std::vector<s
         }
 
         for(auto& doc : relevance){     //вставка результатов поиска
-            result[i].push_back({doc.first, (float)doc.second / (float)max_relevance});
+            float rank = (float)doc.second / (float)max_relevance;  //ранг документа
+            rank = std::round(rank * 100.f) / 100.f;  //округление до сотых
+            result[i].push_back({doc.first, rank});
         }
 
-        if(result[i].empty()) result[i].push_back ({});  //если ничего не найдено
+        if(result[i].empty()) result[i].emplace_back();  //если ничего не найдено
 
         //сортировка результатов поиска
         std::sort(result[i].begin(), result[i].end(), [](RelativeIndex& first, RelativeIndex& second){

@@ -59,12 +59,17 @@ const vector<string> docs = {
 const vector<string> request = {"moscow is the capital of russia"};
 const std::vector<vector<RelativeIndex>> expected = {
         {
-                {7, 1}
+                {7, 1},
+                {14, 1},
+                {0, 0.67},
+                {1, 0.67},
+                {2, 0.67}
         }
 };
 InvertedIndex idx;
 idx.UpdateDocumentBase(docs);
 SearchServer srv(idx);
 std::vector<vector<RelativeIndex>> result = srv.search(request);
+if(result.front().size() > 5) result.front().resize(5);
 ASSERT_EQ(result, expected);
 }
