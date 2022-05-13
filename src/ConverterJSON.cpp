@@ -43,21 +43,21 @@ void ConverterJSON::putAnswers(std::vector<std::vector<RelativeIndex>> answers) 
     auto max_responses = this->GetResponsesLimit();
     JSON answers_json;
 
-    for(int i = 0; i < answers.size(); i++){
+    for(int answer = 0; answer < answers.size(); answer++){
         char request[sizeof("request000")];
-        sprintf(request, "request%03i", i);
+        sprintf(request, "request%03i", answer);
 
-        if(answers[i].front() == RelativeIndex()){  //не найдено
+        if(answers[answer].front() == RelativeIndex()){  //не найдено
             answers_json["answers"][request]["result"] = false;
             continue;
         } else{
             answers_json["answers"][request]["result"] = true;
         }
 
-        for(int j = 0; j < answers[i].size() && j < max_responses; j++){
+        for(int doc = 0; doc < answers[answer].size() && doc < max_responses; doc++){
             JSON relevance;
-            relevance["docid"] = answers[i][j].doc_id;
-            relevance["rank"] = answers[i][j].rank;
+            relevance["docid"] = answers[answer][doc].doc_id;
+            relevance["rank"] = answers[answer][doc].rank;
             answers_json["answers"][request]["relevance"].push_back(relevance);
         }
     }

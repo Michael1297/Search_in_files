@@ -9,10 +9,9 @@
 std::vector<std::vector<RelativeIndex>> SearchServer::search(const std::vector<std::string>& queries_input) {
     std::vector<std::vector<RelativeIndex>> result(queries_input.size());
 
-    for(int i = 0; i < queries_input.size(); i++){
+    for(int query = 0; query < queries_input.size(); query++){
         std::unordered_set<std::string> words;  //список слов
-        std::stringstream text;
-        text << queries_input[i];
+        std::stringstream text(queries_input[query]);
         while(true){
             std::string word;
             text >> word;
@@ -21,7 +20,7 @@ std::vector<std::vector<RelativeIndex>> SearchServer::search(const std::vector<s
         }
 
         if(words.empty()){      //пустой запрос
-            result[i].emplace_back();
+            result[query].emplace_back();
             continue;
         }
 
@@ -41,13 +40,13 @@ std::vector<std::vector<RelativeIndex>> SearchServer::search(const std::vector<s
         for(auto& doc : relevance){     //вставка результатов поиска
             float rank = (float)doc.second / (float)max_relevance;  //ранг документа
             rank = std::round(rank * 100.f) / 100.f;  //округление до сотых
-            result[i].push_back({doc.first, rank});
+            result[query].push_back({doc.first, rank});
         }
 
-        if(result[i].empty()) result[i].emplace_back();  //если ничего не найдено
+        if(result[query].empty()) result[query].emplace_back();  //если ничего не найдено
 
         //сортировка результатов поиска
-        std::sort(result[i].begin(), result[i].end(), [](RelativeIndex& first, RelativeIndex& second){
+        std::sort(result[query].begin(), result[query].end(), [](RelativeIndex& first, RelativeIndex& second){
             return first.rank > second.rank || (first.rank == second.rank && first.doc_id < second.doc_id);
         });
     }

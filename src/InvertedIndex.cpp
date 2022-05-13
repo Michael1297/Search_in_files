@@ -12,10 +12,10 @@ void InvertedIndex::UpdateDocumentBase(std::vector<std::string> input_docs) {
     std::vector<std::thread> threads;
     threads.reserve(input_docs.size());
 
-    for(size_t i = 0; i < input_docs.size(); i++){
-        threads.emplace_back([this, &input_docs, i, &mutex](){
-            std::stringstream text;
-            text << input_docs[i];  //парсинг текста
+    for(size_t id = 0; id < input_docs.size(); id++){
+        threads.emplace_back([this, &input_docs, id, &mutex](){
+            std::stringstream text(input_docs[id]);     //парсинг текста
+
             while (true){
                 std::string word;
                 text >> word;
@@ -23,14 +23,14 @@ void InvertedIndex::UpdateDocumentBase(std::vector<std::string> input_docs) {
 
                 mutex.lock();
                 //поиск элемента с нужным doc_id
-                auto entry = std::find_if(freq_dictionary[word].begin(), freq_dictionary[word].end(), [&i](Entry& element){
-                    return element.doc_id == i;
+                auto entry = std::find_if(freq_dictionary[word].begin(), freq_dictionary[word].end(), [&id](Entry& element){
+                    return element.doc_id == id;
                 });
 
                 if(entry != freq_dictionary[word].end()){   //слово есть в словаре
                     entry->count++;
                 } else{
-                    freq_dictionary[word].push_back({i, 1});    //добавить слово в словарь
+                    freq_dictionary[word].push_back({id, 1});    //добавить слово в словарь
                 }
                 mutex.unlock();
             }
