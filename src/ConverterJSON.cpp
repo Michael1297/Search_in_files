@@ -37,6 +37,7 @@ int ConverterJSON::GetResponsesLimit() {
     if(!file.is_open()) throw Exception("config file is missing");
     file >> config;
     file.close();
+    if(config["config"]["version"] != PROJECT_VERSION) throw Exception("config.json has incorrect file version");
     return config["config"]["max_responses"];
 }
 
@@ -55,10 +56,10 @@ void ConverterJSON::putAnswers(std::vector<std::vector<RelativeIndex>> answers) 
             continue;
         }
 
-        for(int doc = 0; doc < answers[answer].size() && doc < max_responses; doc++){
+        for(int response = 0; response < answers[answer].size() && response < max_responses; response++){
             JSON relevance;
-            relevance["docid"] = answers[answer][doc].doc_id;
-            relevance["rank"] = answers[answer][doc].rank;
+            relevance["docid"] = answers[answer][response].doc_id;
+            relevance["rank"] = answers[answer][response].rank;
             result["answers"][request]["relevance"].push_back(relevance);
         }
     }

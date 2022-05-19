@@ -24,7 +24,7 @@ public:
 /**
 * Обновить или заполнить базу документов, по которой будем совершать
 поиск
-* @param texts_input содержимое документов
+* @param input_docs содержимое документов
 */
     void UpdateDocumentBase(std::vector<std::string> input_docs);
 /**

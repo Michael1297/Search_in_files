@@ -33,9 +33,9 @@ void search() {
     InvertedIndex index;
     std::cout << "Text indexing\n";
     index.UpdateDocumentBase(docs); //индексация текста
-    SearchServer search_server(index);
+    SearchServer server(index);
     std::cout << "Search\n";
-    auto search_results = search_server.search(requests);
+    auto search_results = server.search(requests);
     std::cout << "Put answers\n";
     json.putAnswers(search_results);    //поиск и запись результата
 }

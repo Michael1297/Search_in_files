@@ -26,20 +26,20 @@ std::vector<std::vector<RelativeIndex>> SearchServer::search(const std::vector<s
 
         std::map<size_t, size_t> relevance; //релевантность документов
         for(auto& word : words){
-            for(auto& index : _index.GetWordCount(word)){
-                if(index != EmptyEntry) relevance[index.doc_id] += index.count;
+            for(auto& word_count : _index.GetWordCount(word)){
+                if(word_count != EmptyEntry) relevance[word_count.doc_id] += word_count.count;
             }
         }
 
         size_t max_relevance = 0; //максимальная релевантность для всех документов
-        for(auto& doc : relevance){
-            if(doc.second > max_relevance) max_relevance = doc.second;
+        for(auto& doc_relevance : relevance){
+            if(doc_relevance.second > max_relevance) max_relevance = doc_relevance.second;
         }
 
-        for(auto& doc : relevance){     //вставка результатов поиска
-            float rank = (float)doc.second / (float)max_relevance;  //ранг документа
+        for(auto& doc_relevance : relevance){     //вставка результатов поиска
+            float rank = (float)doc_relevance.second / (float)max_relevance;  //ранг документа
             rank = std::round(rank * 100.f) / 100.f;  //округление до сотых
-            result[query].push_back({doc.first, rank});
+            result[query].push_back({doc_relevance.first, rank});
         }
 
         if(result[query].empty()) result[query].emplace_back();  //если ничего не найдено
