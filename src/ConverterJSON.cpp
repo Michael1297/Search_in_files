@@ -66,14 +66,8 @@ void ConverterJSON::putAnswers(std::vector<std::vector<RelativeIndex>> answers) 
 
     if(result.empty()) result["answers"] = {};  //отсутствуют запросы
 
-    std::ofstream file("answers.json");
-    if(!file.is_open()) throw Exception("answers file is not open");
-    file << result.dump(1, '\t');
-    file.close();
-}
-
-ConverterJSON::ConverterJSON() {
     std::ofstream file("answers.json", std::ios::trunc);
     if(!file.is_open()) throw Exception("answers file is not open");
+    file << result.dump(1, '\t');
     file.close();
 }

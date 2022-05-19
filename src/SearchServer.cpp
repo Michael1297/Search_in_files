@@ -39,7 +39,7 @@ std::vector<std::vector<RelativeIndex>> SearchServer::search(const std::vector<s
         for(auto& doc_relevance : relevance){     //вставка результатов поиска
             float rank = (float)doc_relevance.second / (float)max_relevance;  //ранг документа
             rank = std::round(rank * 100.f) / 100.f;  //округление до сотых
-            result[query].push_back({doc_relevance.first, rank});
+            result[query].emplace_back(doc_relevance.first, rank);
         }
 
         if(result[query].empty()) result[query].emplace_back();  //если ничего не найдено

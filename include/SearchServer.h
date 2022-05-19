@@ -14,6 +14,9 @@ struct RelativeIndex{
     bool operator !=(const RelativeIndex& other) const {
         return (doc_id != other.doc_id || rank != other.rank);
     }
+
+    RelativeIndex() = default;
+    RelativeIndex(size_t _doc_id, float _rank): doc_id(_doc_id), rank(_rank){}
 };
 
 

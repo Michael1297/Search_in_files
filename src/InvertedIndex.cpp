@@ -29,7 +29,7 @@ void InvertedIndex::UpdateDocumentBase(std::vector<std::string> input_docs) {
                 if(element != freq_dictionary[word].end()){   //слово есть в словаре
                     element->count++;
                 } else{
-                    freq_dictionary[word].push_back({id, 1});    //добавить слово в словарь
+                    freq_dictionary[word].emplace_back(id, 1);    //добавить слово в словарь
                 }
                 mutex.unlock();
             }
