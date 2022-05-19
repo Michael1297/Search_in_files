@@ -8,6 +8,8 @@
 #include "Version.h"
 #include "InvertedIndex.h"
 
+#define REQUEST_LENGTH sizeof("request000")
+
 using JSON = nlohmann::json;
 
 std::vector<std::string> ConverterJSON::GetTextDocuments() {
@@ -40,16 +42,16 @@ int ConverterJSON::GetResponsesLimit() {
 
 void ConverterJSON::putAnswers(std::vector<std::vector<RelativeIndex>> answers) {
     auto max_responses = this->GetResponsesLimit();
-    JSON answers_json;
+    JSON result;
 
     for(int answer = 0; answer < answers.size(); answer++){
-        char request[sizeof("request000")];
+        char request[REQUEST_LENGTH];
         sprintf(request, "request%03i", answer);
 
-        if(answers[answer].front() != RelativeIndex()){
-            answers_json["answers"][request]["result"] = true;
+        if(answers[answer].front() != EmptyRelativeIndex){
+            result["answers"][request]["result"] = true;
         } else{
-            answers_json["answers"][request]["result"] = false;     //не найдено
+            result["answers"][request]["result"] = false;     //не найдено
             continue;
         }
 
@@ -57,15 +59,15 @@ void ConverterJSON::putAnswers(std::vector<std::vector<RelativeIndex>> answers) 
             JSON relevance;
             relevance["docid"] = answers[answer][doc].doc_id;
             relevance["rank"] = answers[answer][doc].rank;
-            answers_json["answers"][request]["relevance"].push_back(relevance);
+            result["answers"][request]["relevance"].push_back(relevance);
         }
     }
 
-    if(answers_json.empty()) answers_json["answers"] = {};  //отсутствуют запросы
+    if(result.empty()) result["answers"] = {};  //отсутствуют запросы
 
     std::ofstream file("answers.json");
     if(!file.is_open()) throw Exception("answers file is not open");
-    file << answers_json.dump(1, '\t');
+    file << result.dump(1, '\t');
     file.close();
 }
 

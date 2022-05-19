@@ -3,6 +3,8 @@
 #include <map>
 #include <iostream>
 
+#define EmptyEntry Entry()
+
 struct Entry {
     size_t doc_id, count;
 // Данный оператор необходим для проведения тестовых сценариев

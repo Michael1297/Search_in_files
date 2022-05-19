@@ -27,7 +27,7 @@ std::vector<std::vector<RelativeIndex>> SearchServer::search(const std::vector<s
         std::map<size_t, size_t> relevance; //релевантность документов
         for(auto& word : words){
             for(auto& index : _index.GetWordCount(word)){
-                if(index != Entry()) relevance[index.doc_id] += index.count;
+                if(index != EmptyEntry) relevance[index.doc_id] += index.count;
             }
         }
 
