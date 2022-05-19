@@ -23,12 +23,12 @@ void InvertedIndex::UpdateDocumentBase(std::vector<std::string> input_docs) {
 
                 mutex.lock();
                 //поиск элемента с нужным doc_id
-                auto entry = std::find_if(freq_dictionary[word].begin(), freq_dictionary[word].end(), [&id](Entry& element){
+                auto element = std::find_if(freq_dictionary[word].begin(), freq_dictionary[word].end(), [&id](Entry& element){
                     return element.doc_id == id;
                 });
 
-                if(entry != freq_dictionary[word].end()){   //слово есть в словаре
-                    entry->count++;
+                if(element != freq_dictionary[word].end()){   //слово есть в словаре
+                    element->count++;
                 } else{
                     freq_dictionary[word].push_back({id, 1});    //добавить слово в словарь
                 }
@@ -37,15 +37,18 @@ void InvertedIndex::UpdateDocumentBase(std::vector<std::string> input_docs) {
         });
     }
     for(auto& thread : threads) thread.join();
+
+    //отсортировать freq_dictionary по возрастанию doc_id
+    for(auto& freq : freq_dictionary){
+        std::sort(freq.second.begin(), freq.second.end(), [](Entry& first, Entry& second){
+            return first.doc_id < second.doc_id;
+        });
+    }
 }
 
 std::vector<Entry> InvertedIndex::GetWordCount(const std::string& word) {
     try{
-        auto wordCount = freq_dictionary.at(word);
-        std::sort(wordCount.begin(), wordCount.end(), [](Entry& first, Entry& second){  //отсортировать по возрастанию doc_id
-            return first.doc_id < second.doc_id;
-        });
-        return wordCount;
+        return freq_dictionary.at(word);
     }
     catch (...) {   //если слово отсутствует
         return {{}};

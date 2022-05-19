@@ -7,6 +7,10 @@ struct RelativeIndex{
     bool operator ==(const RelativeIndex& other) const {
         return (doc_id == other.doc_id && rank == other.rank);
     }
+
+    bool operator !=(const RelativeIndex& other) const {
+        return (doc_id != other.doc_id || rank != other.rank);
+    }
 };
 
 

@@ -17,7 +17,6 @@ std::vector<std::string> ConverterJSON::GetTextDocuments() {
     file >> config;
     file.close();
     if(config["config"]["version"] != PROJECT_VERSION) throw Exception("config.json has incorrect file version");
-    std::cout << "Starting " << config["config"]["name"] << " " << PROJECT_VERSION << "\n";
     return config["files"];
 }
 
@@ -47,11 +46,11 @@ void ConverterJSON::putAnswers(std::vector<std::vector<RelativeIndex>> answers) 
         char request[sizeof("request000")];
         sprintf(request, "request%03i", answer);
 
-        if(answers[answer].front() == RelativeIndex()){  //не найдено
-            answers_json["answers"][request]["result"] = false;
-            continue;
-        } else{
+        if(answers[answer].front() != RelativeIndex()){
             answers_json["answers"][request]["result"] = true;
+        } else{
+            answers_json["answers"][request]["result"] = false;     //не найдено
+            continue;
         }
 
         for(int doc = 0; doc < answers[answer].size() && doc < max_responses; doc++){
@@ -64,13 +63,14 @@ void ConverterJSON::putAnswers(std::vector<std::vector<RelativeIndex>> answers) 
 
     if(answers_json.empty()) answers_json["answers"] = {};  //отсутствуют запросы
 
-    {
-        std::ifstream file("answers.json");
-        if(!file.is_open()) throw Exception("answers file is missing");
-        file.close();
-    }
-
     std::ofstream file("answers.json");
+    if(!file.is_open()) throw Exception("answers file is not open");
     file << answers_json.dump(1, '\t');
+    file.close();
+}
+
+ConverterJSON::ConverterJSON() {
+    std::ofstream file("answers.json", std::ios::trunc);
+    if(!file.is_open()) throw Exception("answers file is not open");
     file.close();
 }

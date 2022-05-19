@@ -8,7 +8,7 @@
 */
 class ConverterJSON {
 public:
-    ConverterJSON() = default;
+    ConverterJSON();
 /**
 * Метод получения содержимого файлов
 * @return Возвращает список с содержимым файлов перечисленных
