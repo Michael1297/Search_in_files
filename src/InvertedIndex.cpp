@@ -22,8 +22,8 @@ void InvertedIndex::UpdateDocumentBase(std::vector<std::string> input_docs) {
 
                 mutex.lock();
                 //поиск элемента с нужным doc_id
-                auto element = std::find_if(freq_dictionary[word].begin(), freq_dictionary[word].end(), [&id](Entry& element){
-                    return element.doc_id == id;
+                auto element = std::find_if(freq_dictionary[word].begin(), freq_dictionary[word].end(), [&id](Entry& entry){
+                    return entry.doc_id == id;
                 });
 
                 if(element != freq_dictionary[word].end()){   //слово есть в словаре
