@@ -17,6 +17,7 @@ struct Entry {
     }
 
     Entry() = default;
+
     Entry(size_t _doc_id, size_t _count): doc_id(_doc_id), count(_count){}
 };
 

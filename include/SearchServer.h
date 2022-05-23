@@ -16,6 +16,7 @@ struct RelativeIndex{
     }
 
     RelativeIndex() = default;
+
     RelativeIndex(size_t _doc_id, float _rank): doc_id(_doc_id), rank(_rank){}
 };
 
