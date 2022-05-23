@@ -35,7 +35,7 @@ void search() {
     index.UpdateDocumentBase(docs); //индексация текста
     SearchServer server(index);
     std::cout << "Search\n";
-    auto search_results = server.search(requests);
+    auto search_results = server.search(requests);  //поиск
     std::cout << "Put answers\n";
-    json.putAnswers(search_results);    //поиск и запись результата
+    json.putAnswers(search_results);    //запись результатов
 }
